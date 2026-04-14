@@ -96,7 +96,7 @@ jobs:
           python -m tox run -r
 
   windows:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows, x64, ec2]
     timeout-minutes: 60  # 1 hour timeout
     strategy:
       matrix:
