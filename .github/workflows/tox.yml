@@ -114,17 +114,19 @@ jobs:
         with:
           version: "latest"
       - name: Install dependencies
+        shell: pwsh
         run: |
           uv venv venv
-          source venv/Scripts/activate
+          . .\venv\Scripts\Activate.ps1
           uv pip install --upgrade pip
           uv pip install tox
       - name: Test with tox
-        shell: bash
+        shell: pwsh
         run: |
-          source venv/Scripts/activate
-          if [[ "${{ matrix.toxenv }}" == "wheel" ]]; then
+          . .\venv\Scripts\Activate.ps1
+          if ("${{ matrix.toxenv }}" -eq "wheel") {
             python -m tox run -e windows-wheel
-          else
-            python -m tox run -e $(echo "py${{ matrix.python-version }}-${{ matrix.toxenv }}" | tr -d '.')
-          fi
+          } else {
+            $toxenv = "py${{ matrix.python-version }}-${{ matrix.toxenv }}".Replace('.', '')
+            python -m tox run -e $toxenv
+          }
