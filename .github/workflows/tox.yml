@@ -13,7 +13,7 @@ defaults:
 
 jobs:
   tox:
-    runs-on: [self-hosted, linux, x64, ec2]
+    runs-on: [self-hosted, linux, x64, python]
     timeout-minutes: 60  # 1 hour timeout
     strategy:
       matrix:
