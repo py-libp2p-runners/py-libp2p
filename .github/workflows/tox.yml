@@ -7,6 +7,11 @@ on:
       - main
       - github-actions
 
+# NOTE: This workflow requires the py-libp2p runner image (Phase 2).
+# The runner must have label "python" — meaning it runs runner-py-libp2p:linux-latest.
+# If runners show as "offline", trigger build-linux-py-runner.yml first,
+# then update EC2 ghcr_image to runner-py-libp2p:linux-latest and restart containers.
+
 defaults:
   run:
     shell: bash

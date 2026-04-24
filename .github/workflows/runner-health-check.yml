@@ -1,0 +1,84 @@
+name: Runner Health Check
+
+# =============================================================================
+# Smoke-test workflow — runs on the self-hosted EC2 runners to confirm they
+# are online, registered, and able to execute jobs.
+#
+# This is intentionally minimal:
+#   - No Python deps, no tox, no matrix
+#   - Just verifies the runner environment is sane
+#
+# Once this passes → Phase 2: trigger build-linux-py-runner.yml to build the
+# py-libp2p runner image with all Python deps, then update EC2 to use it,
+# then run the full tox suite via the existing tox.yml workflow.
+# =============================================================================
+
+on:
+  push:
+    branches: [main, test-runner]
+  workflow_dispatch:
+
+jobs:
+  runner-health-check:
+    name: Smoke test self-hosted runner
+    runs-on: [self-hosted, linux, x64, ec2]
+    timeout-minutes: 10
+
+    steps:
+      - name: Runner info
+        run: |
+          echo "======================================"
+          echo "  Runner: $RUNNER_NAME"
+          echo "  OS:     $(uname -a)"
+          echo "  User:   $(whoami)"
+          echo "  Home:   $HOME"
+          echo "  PWD:    $PWD"
+          echo "======================================"
+
+      - name: Verify NOT running as root
+        run: |
+          if [ "$(whoami)" = "root" ]; then
+            echo "❌ ERROR: Running as root — GitHub runner requirement violated"
+            exit 1
+          fi
+          echo "✅ Running as non-root user: $(whoami)"
+
+      - name: Check essential tools
+        run: |
+          echo "--- Checking tools ---"
+          git --version
+          curl --version | head -1
+          python3 --version
+          docker --version
+          aws --version
+          echo "✅ All essential tools present"
+
+      - name: Check Docker socket access
+        run: |
+          docker ps 2>&1 && echo "✅ Docker socket accessible" || echo "⚠️  Docker socket not accessible (may need group membership)"
+
+      - name: Check network connectivity
+        run: |
+          curl -fsSL --max-time 10 https://api.github.com/zen
+          echo ""
+          echo "✅ GitHub API reachable"
+
+      - name: Check AWS SSM access
+        run: |
+          aws sts get-caller-identity --region eu-north-1 2>&1 && echo "✅ AWS IAM role working" || echo "⚠️  AWS access check failed"
+
+      - uses: actions/checkout@v4
+
+      - name: Repo checkout verification
+        run: |
+          echo "✅ Checked out: $(git log --oneline -1)"
+          echo "   Files: $(ls | head -5)"
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "======================================"
+          echo "  ✅ Runner health check PASSED"
+          echo "  Runner is online and functional."
+          echo "  Ready for Phase 2: py-libp2p runner"
+          echo "======================================"
