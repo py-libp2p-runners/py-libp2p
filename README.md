@@ -1,10 +1,10 @@
 # py-libp2p
 
-<h1 align="center">
+<h1 align="center"> 
   <a href="https://libp2p.io/"><img width="250" src="https://github.com/libp2p/py-libp2p/blob/main/assets/py-libp2p-logo.png?raw=true" alt="py-libp2p hex logo" /></a>
 </h1>
 
-<h3 align="center">The Python implementation of the libp2p networking stack.</h3>
+<h3 align="center">The Python implementation of the libp2p networking stack .</h3>
 
 [![Discord](https://img.shields.io/discord/1204447718093750272?color=blueviolet&label=discord)](https://discord.gg/hQJnbd85N6)
 [![PyPI version](https://badge.fury.io/py/libp2p.svg)](https://badge.fury.io/py/libp2p)
