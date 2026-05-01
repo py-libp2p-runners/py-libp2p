@@ -1,4 +1,4 @@
-# py-libp2p
+# py-libp2p v
 
 <h1 align="center">
   <a href="https://libp2p.io/"><img width="250" src="https://github.com/libp2p/py-libp2p/blob/main/assets/py-libp2p-logo.png?raw=true" alt="py-libp2p hex logo" /></a>
